@@ -2,7 +2,7 @@
 
 Nitro (and thus Nuxt) has experimental support for scheduled tasks. However, if you're deploying to Netlify, you'll quickly discover that Nitro's `scheduledTasks` feature doesn't work yet. Don't worry though - there's a workaround that's actually quite elegant!
 
-## The Problem
+## The Problem with Nitro's Scheduled Tasks
 
 Nitro's experimental tasks feature allows you to define scheduled jobs directly in your Nuxt application:
 
@@ -22,7 +22,7 @@ export default defineNuxtConfig({
 
 While this works great locally and on some platforms, Netlify doesn't support Nitro's scheduled tasks... yet.
 
-## The Solution: Netlify Scheduled Functions + API Endpoints
+## The Solution: Netlify Scheduled Functions + Nuxt API Endpoints
 
 The workaround is surprisingly simple and follows good architectural principles:
 
@@ -39,7 +39,7 @@ This approach has several benefits:
 - ✅ Secure with proper authentication
 - ✅ Can be easily migrated to native Nitro tasks when Netlify supports them
 
-## Implementation
+## How to Implement Scheduled Tasks in Nuxt on Netlify
 
 ### Step 1: Create Your Task Logic as a Nuxt API Endpoint
 
@@ -104,9 +104,14 @@ export default async (req: Request) => {
         secret: process.env.NUXT_TASK_SECRET,
       },
     });
+    if (!response.success) {
+      throw new Error("Task failed", { cause: response });
+    }
     console.log("Task completed:", response);
   } catch (error) {
-    console.error("Task failed:", error);
+    console.error("Task failed:", {
+      cause: error,
+    });
   }
 };
 
@@ -141,7 +146,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
-    taskSecret: null,
+    taskSecret: null, // this will be set to the environment variable NUXT_TASK_SECRET under the hood
   },
 });
 ```
@@ -220,6 +225,10 @@ Use [crontab.guru](https://crontab.guru/) to easily generate and test cron expre
 2. **Use HTTPS** for all requests (Netlify provides this automatically)
 3. **Don't log sensitive information** like secret keys
 4. **Use strong, random secret keys** and rotate them regularly
+
+## Limitations
+
+- The task is limited to the timeout of the Netlify function (10 seconds by default - but you can [request an increase in the Netlify support forum](https://answers.netlify.com/t/function-timeout-increase/53881))
 
 ## Monitoring and Debugging
 
