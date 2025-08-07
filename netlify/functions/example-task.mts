@@ -14,9 +14,14 @@ export default async (req: Request) => {
         secret: process.env.NUXT_TASK_SECRET,
       },
     });
+    if (!response.success) {
+      throw new Error("Task failed", { cause: response });
+    }
     console.log("Task completed:", response);
   } catch (error) {
-    console.error("Task failed:", error);
+    console.error("Task failed:", {
+      cause: error,
+    });
   }
 };
 
