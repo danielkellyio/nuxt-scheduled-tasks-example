@@ -3,12 +3,18 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   modules: ["@nuxt/eslint"],
+
+  runtimeConfig: {
+    taskSecret: process.env.TASK_SECRET,
+  },
+
   nitro: {
     experimental: {
       tasks: true,
     },
+    // This won't work on Netlify yet...
     scheduledTasks: {
-      "* * * * *": ["example:record"], // run every minute
+      "0 * * * *": ["example:record"], // run every hour
     },
   },
 });
