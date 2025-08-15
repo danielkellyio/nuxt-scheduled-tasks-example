@@ -12,6 +12,11 @@ export default defineNuxtConfig({
     experimental: {
       tasks: true,
     },
+    routeRules: {
+      "/about": {
+        isr: true,
+      },
+    },
     // This won't work on Netlify yet...
     scheduledTasks: {
       "0 * * * *": ["example:record"], // run every hour
