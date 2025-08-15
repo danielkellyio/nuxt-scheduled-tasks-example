@@ -4,6 +4,6 @@ import { purgeCache } from "@netlify/functions";
 
 export default async () => {
   purgeCache({
-    tags: ["tag1"],
+    tags: ["about"],
   });
 };

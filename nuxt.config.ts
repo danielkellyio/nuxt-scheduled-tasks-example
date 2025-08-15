@@ -15,6 +15,9 @@ export default defineNuxtConfig({
     routeRules: {
       "/about": {
         isr: true,
+        headers: {
+          "Cache-Tag": "about",
+        },
       },
     },
     // This won't work on Netlify yet...
